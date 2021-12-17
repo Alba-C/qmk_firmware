@@ -8,14 +8,14 @@
         { SONG(QWERTY_SOUND), SONG(COLEMAK_SOUND), SONG(DVORAK_SOUND) }
 #endif
 
+#define COMBO_COUNT 3
 #define TAPPING_TERM 200
+#define COMBO_HOLD_TERM 300
 #define MUSIC_MASK (keycode != KC_NO)
-#define COMBO_COUNT 2
 
 // mouse wheel
 #define MOUSEKEY_WHEEL_TIME_TO_MAX 5
 #define MOUSEKEY_WHEEL_DELAY 5
-
 
 // mouse pointer
 #define MOUSEKEY_DELAY 5

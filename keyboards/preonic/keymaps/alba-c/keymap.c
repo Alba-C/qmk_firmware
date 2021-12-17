@@ -51,35 +51,38 @@ qk_tap_dance_action_t tap_dance_actions[] = {
     [TD_RSFT_END] = ACTION_TAP_DANCE_DOUBLE(KC_RSFT, KC_END),
 };
 
-// Combos 
+// Combos
 enum combo_events {
-  ZC_COPY,
-  XV_PASTE
+  AC_COPY,
+  AV_PASTE,
+  CONSOLE_LOG,
+  COMBO_LENGTH,
 };
 
-// Combos definitions
-const uint16_t PROGMEM copy_combo[] = {KC_Z, KC_C, COMBO_END};
-const uint16_t PROGMEM paste_combo[] = {KC_X, KC_V, COMBO_END};
+uint16_t COMBO_LEN = COMBO_LENGTH;
 
-combo_t key_combos[COMBO_COUNT] = {
-  [ZC_COPY] = COMBO_ACTION(copy_combo),
-  [XV_PASTE] = COMBO_ACTION(paste_combo),
+// Combos definitions
+const uint16_t PROGMEM console_log[] = {KC_A, KC_L, KC_G, COMBO_END};
+
+combo_t key_combos[] = {
+  [CONSOLE_LOG] = COMBO_ACTION(console_log),
 };
 
 void process_combo_event(uint16_t combo_index, bool pressed) {
   switch(combo_index) {
-    case ZC_COPY:
+    case CONSOLE_LOG:
       if (pressed) {
-        tap_code16(LCTL(KC_C));
-      }
-      break;
-    case XV_PASTE:
-      if (pressed) {
-        tap_code16(LCTL(KC_V));
+       SEND_STRING("console.log(\"\", )");
+            tap_code16(KC_LEFT);
+            tap_code16(KC_LEFT);
+            tap_code16(KC_LEFT);
+            tap_code16(KC_LEFT);
       }
       break;
   }
 }
+
+
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -105,17 +108,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   RGB_MOD, KC_LCTL, KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
 ),
 
-/* Lower
+/* Lower Left
  * ,-----------------------------------------------------------------------------------.
  * |   ~  |   !  |   @  |   #  |   $  |   %  |   ^  |   &  |   *  |   (  |   )  | Bksp |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
  * |MO(3) |   !  | Lclk | MsUp | Rclk |   %  |   ^  |   &  |   *  |   (  |   )  | Del  |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | Del  | MO(3) |MsLeft|MsDown|MsRght|  F5  | Left | Down |  UP  | Right |  ;:  |  |  |
+ * | Del  | MO(3) |MsLeft|MsDown|MsRght|  F5  | Left | Down |  UP  | Right |  ;: |  |  |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
  * |      |  F7  |  F8  |  F9  |KC_WH_U|  F11 |  F12 |KC_WH_D|  ±  | Home | End  |     |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |RGB_TOG|      |      |      |      |             |      | Next | Vol- | Vol+ | Play |
+ * |RGB_TOG|      |      |      |      |     Bksp    |     | Next | Vol- | Vol+ | Play |
  * `-----------------------------------------------------------------------------------'
  */
 [_LOWER] = LAYOUT_preonic_grid(
@@ -123,10 +126,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   MO(_NUMPAD), KC_EXLM, KC_BTN1,   KC_MS_U,KC_BTN2,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_DEL,
   KC_DEL,  MO(_NUMPAD),   KC_MS_L, KC_MS_D, KC_MS_R,   KC_F5, KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_SCLN, KC_PIPE,
   _______ , KC_F7  ,   KC_F8,   KC_F9, KC_WH_U,  KC_F11,  KC_F12, KC_WH_D,S(KC_NUBS),KC_HOME, KC_END, _______,
-  RGB_TOG , _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
+  RGB_TOG , _______, _______, _______, _______, KC_BSPC, KC_BSPC, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
 ),
 
-/* Raise
+/* Raise Right
  * ,-----------------------------------------------------------------------------------.
  * |   `  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  | Bksp |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -200,7 +203,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           }
           return false;
           break;
-   
+
         case LOWER:
           if (record->event.pressed) {
             layer_on(_LOWER);
